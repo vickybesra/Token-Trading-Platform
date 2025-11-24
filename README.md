@@ -159,6 +159,11 @@ npm run build
 
 Then deploy to Vercel or your preferred hosting platform.
 
+## Snapshots
+
+<img width="1438" height="779" alt="Screenshot 2025-11-24 at 8 12 24 PM" src="https://github.com/user-attachments/assets/af496214-2707-4b60-9157-948b97bef476" />
+<img width="1438" height="779" alt="Screenshot 2025-11-24 at 8 12 38 PM" src="https://github.com/user-attachments/assets/d69390ed-a50b-497b-b530-2728d237592a" />
+
 ## License
 
 This project is private and proprietary.
