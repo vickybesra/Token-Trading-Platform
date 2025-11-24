@@ -540,40 +540,76 @@ const Popover = ({ token }: { token: Token }) => {
 // ============================================================================
 
 const Modal = ({
-  token,
+  tokenId,
+  tokens,
+  previousTokens,
   onClose,
 }: {
-  token: Token | null;
+  tokenId: string | null;
+  tokens: Token[];
+  previousTokens: Token[];
   onClose: () => void;
 }) => {
+  const token = tokenId ? tokens.find((t) => t.id === tokenId) : null;
+  const previousToken = tokenId
+    ? previousTokens.find((t) => t.id === tokenId) || null
+    : null;
+
   if (!token) return null;
 
-    return (
+  const prevPrice = previousToken?.price ?? token.price;
+  const prevChange = previousToken?.change24h ?? token.change24h;
+  const [priceFlashClass, setPriceFlashClass] = useState("");
+  const [changeFlashClass, setChangeFlashClass] = useState("");
+
+  useEffect(() => {
+    if (previousToken && token.price !== prevPrice) {
+      const flash =
+        token.price > prevPrice ? "bg-green-500/20" : "bg-red-500/20";
+      setPriceFlashClass(flash);
+      const timer = setTimeout(() => setPriceFlashClass(""), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [token.price, prevPrice, previousToken]);
+
+  useEffect(() => {
+    if (previousToken && token.change24h !== prevChange) {
+      const flash =
+        token.change24h > prevChange ? "bg-green-500/20" : "bg-red-500/20";
+      setChangeFlashClass(flash);
+      const timer = setTimeout(() => setChangeFlashClass(""), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [token.change24h, prevChange, previousToken]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70"
+      onClick={onClose}
+    >
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70"
-        onClick={onClose}
+        className="bg-gray-800 rounded-xl shadow-2xl border border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
       >
-        <div
-          className="bg-gray-800 rounded-xl shadow-2xl border border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-          onClick={(e) => e.stopPropagation()}
-        >
         <div className="p-6 border-b border-gray-700">
           <div className="flex justify-between items-start">
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 rounded-lg bg-gray-700 flex items-center justify-center border border-gray-600 overflow-hidden relative">
-                {token.icon.startsWith('http') || token.icon.startsWith('data:') ? (
-                  <img 
-                    src={token.icon} 
+                {token.icon.startsWith("http") ||
+                token.icon.startsWith("data:") ? (
+                  <img
+                    src={token.icon}
                     alt={token.name}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       // Fallback to symbol if image fails to load
                       const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
+                      target.style.display = "none";
                       const parent = target.parentElement;
                       if (parent) {
                         parent.textContent = token.symbol[0];
-                        parent.className += ' text-gray-300 text-2xl font-semibold';
+                        parent.className +=
+                          " text-gray-300 text-2xl font-semibold";
                       }
                     }}
                   />
@@ -598,13 +634,15 @@ const Modal = ({
 
         <div className="p-6 space-y-6">
           <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-gray-900 rounded-lg border border-gray-700">
+            <div
+              className={`p-4 bg-gray-900 rounded-lg border border-gray-700 transition-all duration-500 ${priceFlashClass}`}
+            >
               <div className="text-sm text-gray-400 mb-1 font-medium">Price</div>
               <div className="text-2xl font-bold text-white mb-1">
                 {formatCurrency(token.price)}
               </div>
               <div
-                className={`text-sm font-semibold ${
+                className={`text-sm font-semibold transition-all duration-500 ${changeFlashClass} ${
                   token.change24h >= 0 ? "text-green-400" : "text-red-400"
                 }`}
               >
@@ -613,7 +651,9 @@ const Modal = ({
               </div>
             </div>
             <div className="p-4 bg-gray-900 rounded-lg border border-gray-700">
-              <div className="text-sm text-gray-400 mb-1 font-medium">Market Cap</div>
+              <div className="text-sm text-gray-400 mb-1 font-medium">
+                Market Cap
+              </div>
               <div className="text-2xl font-bold text-white">
                 {formatCurrency(token.marketCap)}
               </div>
@@ -924,7 +964,7 @@ const TokenTradingTable = () => {
     key: "marketCap",
     direction: "descending",
   });
-  const [selectedToken, setSelectedToken] = useState<Token | null>(null);
+  const [selectedTokenId, setSelectedTokenId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterColumn, setFilterColumn] = useState<TokenColumn | "All">("All");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -1277,7 +1317,7 @@ const TokenTradingTable = () => {
                         previousToken={
                           previousTokens.find((t) => t.id === token.id) || null
                         }
-                        onClick={() => setSelectedToken(token)}
+                        onClick={() => setSelectedTokenId(token.id)}
                       />
                     ))
                   )}
@@ -1289,7 +1329,12 @@ const TokenTradingTable = () => {
         </div>
 
         {/* Modal */}
-        <Modal token={selectedToken} onClose={() => setSelectedToken(null)} />
+        <Modal
+          tokenId={selectedTokenId}
+          tokens={tokens}
+          previousTokens={previousTokens}
+          onClose={() => setSelectedTokenId(null)}
+        />
       </div>
     </>
   );
