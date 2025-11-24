@@ -1,6 +1,6 @@
 # Token Trading Platform
 
-A modern, real-time token trading table dashboard built with Next.js, React, and Tailwind CSS. This application provides an enhanced user interface for viewing and analyzing cryptocurrency token data with advanced filtering, sorting, and visualization capabilities.
+A modern, real-time token trading platform dashboard built with Next.js, React, and Tailwind CSS. This application provides an enhanced user interface for viewing and analyzing cryptocurrency token data with advanced filtering, sorting, and visualization capabilities.
 
 ## Task Overview
 
