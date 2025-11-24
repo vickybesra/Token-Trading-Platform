@@ -4,7 +4,7 @@ A modern, real-time token trading platform dashboard built with Next.js, React, 
 
 ## Task Overview
 
-This project implements a comprehensive token trading table interface with the following key features:
+This project implements a comprehensive token trading platform interface with the following key features:
 
 - **Real-time Data Updates**: Simulated WebSocket connections for live price updates
 - **Advanced Filtering**: Dropdown menus and quick filter pills for status-based filtering
@@ -66,7 +66,7 @@ This project implements a comprehensive token trading table interface with the f
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd Token-Trading-Table
+cd Token-Trading-Platform
 ```
 
 2. Install dependencies:
@@ -94,9 +94,9 @@ bun dev
 ## Project Structure
 
 ```
-Token-Trading-Table/
+Token-Trading-Platform/
 ├── app/
-│   ├── page.tsx          # Main token trading table component
+│   ├── page.tsx          # Main token trading platform component
 │   ├── layout.tsx        # Root layout
 │   └── globals.css       # Global styles
 ├── public/               # Static assets
